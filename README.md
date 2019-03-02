@@ -10,6 +10,8 @@ Tendermintの概要は、[こちら](./docs/tendermint-overview.md)を参照し�
 - 好きな文字列(ドメイン)の購入(buy-name)
 - 他のユーザーが所有する文字列の購入(buy-name)
 - ドメインに対して、好きな文字列(IP)の紐づけ(set-name)
+- ドメインの名前解決(resolve)
+- ドメインの所有権の確認(whois)
 
 ## Getting started
 ```
@@ -31,13 +33,12 @@ $ make install
 $ make start
 ```
 
-### Demo
+## Demo
 ユーザーを2人作って、nameの売買およびそれに紐づくIPの設定を行う。
 
 参考:https://cosmos.network/docs/tutorial/build-run.html#running-the-live-network-and-using-the-commands
 
-
-設定をする
+まずは、ユーザーの設定をして、アプリケーションを開始する。
 ```
 $ sh scripts/start.sh #シェルスクリプトを実行すると、2人分のpasswordを設定することが求められるので、適宜設定する。
 $ nsd start #applicationのdeamonが起動する
@@ -60,14 +61,18 @@ $ nscli tx nameservice set-name jack.id 8.8.8.8 --from jack
 
 ドメインの所有権を確認する
 ```
-nscli query nameservice whois jack.id
+$nscli query nameservice whois jack.id
 ```
 
-別のユーザーであるaliceがそのドメインを10mycoinsで購入する
+ドメインの名前解決をする
 ```
-nscli tx nameservice buy-name jack.id 10mycoin --from alice 
+$ nscli query nameservice resolve jack.id
 ```
 
+別のユーザーであるaliceがそのドメインをjackより高値で購入する
+```
+$ nscli tx nameservice buy-name jack.id 10mycoin --from alice 
+```
 
 ## 今後の展望
 このapplicationはあくまで、cosmos-sdkの動作確認用であり、コンセンサスはtendermintに部分を預けているだけなので、validatorの数を増やしたり、手数料の設定などを独自の設定を追加していきたい。
