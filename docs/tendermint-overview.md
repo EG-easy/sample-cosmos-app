@@ -1,4 +1,18 @@
-## tendermintの概要と利点について
+## tendermintの概要
+Tendermintは、複数のマシンでアプリケーションを安全かつ一貫して複製するためのソフトウェアである。安全であるということは、最大1/3のマシンが任意の方法で機能しなくてもTendermintが機能することを意味すると同時に、一貫して、すべての故障していないマシンが同じトランザクションログを見て同じ状態を計算する。安全で一貫したレプリケーションは、分散システムにおける基本的な問題です。これは、通貨から選挙、インフラストラクチャオーケストレーション、そしてそれ以降まで、幅広いアプリケーションのフォールトトレランスにおいて重要な役割を果たす。
+
+Tendermintは、ブロックチェーンコンセンサスエンジンと汎用アプリケーションインタフェースという2つの主要な技術コンポーネントで構成されている。Tendermint Coreと呼ばれるコンセンサスエンジンは、同じトランザクションがすべてのマシンに同じ順序で記録される。アプリケーションブロックチェーンインタフェース（ABCI）と呼ばれるアプリケーションインタフェースにより、トランザクションを任意のプログラミング言語で処理することができる。開発者はあらゆるプログラミング言語で作成されたアプリケーションのBFTステートマシンレプリケーションにTendermintを使用することができる。
+
+Tendermintは、使いやすく、理解しやすく、高性能で、さまざまな分散アプリケーションに役立つように設計されている。
+
+tendermint 参考https://tendermint.com/docs/introduction/what-is-tendermint.html#tendermint-vs-x
+
+## tendermintの利点
+- 1秒当たり数千トランザクションを扱える(らしい)
+- ブロック生成後すぐにファイナリティを得られる（一度承認されたトランザクションは覆らない。これはBFT性を持った投票型のコンセンサスなため）
+- あらゆるプログラミング言語でブロックチェーンプロトコル周りを開発することが可能
+- パブリックチェーンでもプライベートチェーンでも実装可能
+- ネットワーク参加者の1/3以上が悪意を持っていない限り安全
 
 ## Tendermint coreとApplication logic間の通信について
 Tendermint上で構築されるapplicationは、ABCI(Application BlockChain Interface)と呼ばれる独自のインターフェースを実装することで、相互に通信することができる。ABCIは、コンセンサスエンジンであるtendermint coreとアプリケーションロジックの間で、`message protocol`に従ってメッセージの交換を行う。
@@ -17,6 +31,7 @@ ABCIのメソッドは以下の3通りのコネクションに分類すること
 
 
 **ABCIについて**
+
 Ethermintやcosmos-sdk、Tendermintで使用されているgo言語は、厳密にはオブジェクト指向プログラミング言語ではないが、 インタフェースを用いることでポリモーフィズムを実現することができる。 Go言語ではインタフェースが必要とするメソッドをすべて実装した時点で、自動的にそのインタフェースを実装したとみなされるので、**Tendermintで言うところのABCIを実装するとは、 tendermintで定義されている`Info`や`CheckTx`、`DeliverTx`、`Commit`をはじめとするメソッドを実装するということ**になる。
 
 実際にtendermintのコードを見てみると、以下のように、applicationのインターフェースが定義されているのがわかる。
@@ -39,7 +54,7 @@ type Application interface {
 ## cosmos-sdkのbaseappにおけるabciの実装
 application側のEthermintの方でABCIがどのように実装されているのかを見ていく前に、cosmos-sdkについて考えてみよう。Cosmos SDKは、Tendermint ABCI アプリケーションをGo言語で作るフレームワークである。Cosmos SDKを使うことで開発者は、簡単にCosmosネットワーク内でブロックチェーンアプリケーションを作ることができる。もちろん、ethermintでもcosmos-sdkが使用されている。
 
-Cosmos SDK参考：https://cosmos.network/docs/sdk/overview.html
+Cosmos SDK参考：https://cosmos.network/docs/intro/sdk-design.html
 
 **Cosmos SDKのフォルダ構造**
 - **baseapp**:基本的なABCIについて定めており、Tendermintのnodeとの通信を可能にする。
@@ -252,6 +267,7 @@ ethDB, err := state.NewDatabase(cms, db, state.DefaultStoreCacheSize)
 	app.ethDB = ethDB
 ```
 データベースをappの中に付け加えている。データベースの実装については、database.goを参照のこと。
+
 **mapperとkeeperの設定**
 ```go:ethermint.go
 	app.accountMapper = auth.NewAccountMapper(codec, app.accountKey, auth.ProtoBaseAccount)
@@ -381,12 +397,12 @@ Ethermintに限らず、Tendermint上で実装されたアプリケーション�
 
 興味深いことに、tendermintではすでにブロックの形式は決まっており、アプリケーション側はABCIを実装することを通してそれに合うような形式のトランザクションを生成する必要があるということだ。そうすれば、どのようなトランザクションであっても、tendermint上では規定された通りのブロックが生成されることになり、コンセンサスレイヤーにおいて、アプリケーション側は、何も実装しなくて済むという恩恵を受けることができる。
 
-## メモ
-codecについて
-antehandlerについて
-DecodeRLPについて
-ed25519について
-databaseの実装の中身
-hadlerの実装の中身
-beginblock, endblockの実装の中身
-deliverTX, checkTXの実装の中身
+## 今後さらに調べたいこと
+- codecについて
+- antehandlerについて
+- DecodeRLPについて
+- ed25519について
+- databaseの実装の中身
+- hadlerの実装の中身
+- beginblock, endblockの実装の中身
+- deliverTX, checkTXの実装の中身
