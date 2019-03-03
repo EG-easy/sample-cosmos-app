@@ -32,9 +32,10 @@ $ make install
 ```
 $ make build
 $ make start
-#コンテナのなかで
+# コンテナのなかで
 $ make install 
 ```
+ちなみに起動しているコンテナの中には、`docker exec -it sample-cosmos-app /bin/bash`で入れる。
 
 ## Demo
 ユーザーを2人作って、nameの売買およびそれに紐づくIPの設定を行う。
@@ -43,9 +44,9 @@ $ make install
 
 まずは、ユーザーの設定をして、アプリケーションを開始する。
 ```
-#シェルスクリプトを実行すると、2人分のpasswordを設定することが求められるので、適宜設定する。
+# シェルスクリプトを実行すると、2人分のpasswordを設定することが求められるので、適宜設定する。
 $ sh scripts/start.sh
-#applicationのdeamonが起動する
+# applicationのdeamonが起動する
 $ nsd start 
 ```
 
