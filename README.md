@@ -30,7 +30,10 @@ $ make install
 
 ### Using Docker
 ```
+$ make build
 $ make start
+#コンテナのなかで
+$ make install 
 ```
 
 ## Demo
