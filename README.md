@@ -35,7 +35,7 @@ $ make start
 # コンテナのなかで
 $ make install 
 ```
-ちなみに起動しているコンテナの中には、`docker exec -it sample-cosmos-app /bin/bash`で入れる。
+ちなみに起動しているコンテナの中には、`docker exec -it sample-cosmos-app /bin/sh`で入れる。
 
 ## Demo
 ユーザーを2人作って、nameの売買およびそれに紐づくIPの設定を行う。
