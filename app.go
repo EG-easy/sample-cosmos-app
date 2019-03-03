@@ -21,6 +21,7 @@ const (
 	appName = "nameservice"
 )
 
+//cosmo-sdkのbaseAppを利用する
 type nameServiceApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
@@ -45,20 +46,21 @@ func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 
 	cdc := MakeCodec()
 
+	//BaseAppは、ABCIを通してTendermintと相互にやりとりをする
 	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc))
 
 	var app = &nameServiceApp{
 		BaseApp: bApp,
 		cdc: cdc,
 
-		keyMain:sdk.NewKVStoreKey("main"),
-		keyAccount:       sdk.NewKVStoreKey("acc"),
-		keyNSnames:       sdk.NewKVStoreKey("ns_names"),
-		keyNSowners:      sdk.NewKVStoreKey("ns_owners"),
-		keyNSprices:      sdk.NewKVStoreKey("ns_prices"),
+		keyMain: sdk.NewKVStoreKey("main"),
+		keyAccount: sdk.NewKVStoreKey("acc"),
+		keyNSnames: sdk.NewKVStoreKey("ns_names"),
+		keyNSowners: sdk.NewKVStoreKey("ns_owners"),
+		keyNSprices: sdk.NewKVStoreKey("ns_prices"),
 		keyFeeCollection: sdk.NewKVStoreKey("fee_collection"),
-		keyParams:        sdk.NewKVStoreKey("params"),
-		tkeyParams:       sdk.NewTransientStoreKey("transient_params"),
+		keyParams: sdk.NewKVStoreKey("params"),
+		tkeyParams: sdk.NewTransientStoreKey("transient_params"),
 	}
 
 	app.paramsKeeper = params.NewKeeper(app.cdc, app.keyParams, app.tkeyParams)
@@ -91,6 +93,9 @@ func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 	app.Router().
 		AddRoute("bank", bank.NewHandler(app.bankKeeper)).
 		AddRoute("nameservice", nameservice.NewHandler(app.nsKeeper))
+
+	app.QueryRouter().
+		AddRoute("nameservice", nameservice.NewQuerier(app.nsKeeper))
 
 	app.SetInitChainer(app.initChainer)
 

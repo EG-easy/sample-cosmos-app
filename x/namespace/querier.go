@@ -6,11 +6,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 )
 
+//querierはapplicationの状態を確認するためのメソッドを定義する
+
+
 const (
 	QueryResolve = "resolve"
 	QueryWhois = "whois"
 )
 
+//NewQuerierは、querierのroutingを行う
+//queryには、Msgのようなinterfaceはないので、自分で場合分けする
 func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
 		switch path[0]{

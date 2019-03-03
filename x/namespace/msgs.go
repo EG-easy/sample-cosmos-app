@@ -5,6 +5,19 @@ import (
 	"encoding/json"
 )
 
+/*
+Msgsは、stateの変更のtransactionを実行する時に渡すパラメータで、Txsにラップされてnetworkにbroadcastされる
+cosmos-sdkを使うことで、Msgsをラップしたり、Txsからのアンラップしたりしてくれるので、実質的にMsgsの定義だけすれば良い
+Msgsは、次のinterfaceを満たすように実装すれば良い。
+
+type Msg interface {
+	Type() string
+	Route() string
+	ValidateBasic() Error
+	GetSignBytes() []byte
+	GetSigners() []AccAddress
+}
+*/
 
 //SetNameに関するMsg interfaceの実装
 type MsgSetName struct {
@@ -21,14 +34,17 @@ func NewMsgSetName(name string, value string, owner sdk.AccAddress) MsgSetName {
 	}
 }
 
+//module名を定義する
 func (msg MsgSetName) Route() string {
 	return "nameservice"
 }
 
+//action名を決める
 func (msg MsgSetName) Type() string {
 	return "set_name"
 }
 
+//Msgsの中身のチェックをする
 func (msg MsgSetName) ValidateBasic() sdk.Error {
 	if msg.Owner.Empty(){
 		return sdk.ErrInvalidAddress(msg.Owner.String())
@@ -39,6 +55,7 @@ func (msg MsgSetName) ValidateBasic() sdk.Error {
 	return nil
 }
 
+//署名するためのMsgデータを取得する
 func (msg MsgSetName) GetSignBytes()[]byte{
 	b, err := json.Marshal(msg)
 	if err != nil{
@@ -47,10 +64,10 @@ func (msg MsgSetName) GetSignBytes()[]byte{
 	return sdk.MustSortJSON(b)
 }
 
+//誰の署名が必要か定義する
 func (msg MsgSetName) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
-
 
 //BuyNameに関するMsg interfaceの実装
 type MsgBuyName struct {
@@ -93,12 +110,9 @@ func (msg MsgBuyName) GetSignBytes() []byte{
 	if err != nil {
 		panic(err)
 	}
-
 	return sdk.MustSortJSON(b)
 }
 
 func (msg MsgBuyName) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Buyer}
 }
-
-

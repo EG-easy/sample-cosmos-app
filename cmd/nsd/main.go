@@ -41,7 +41,7 @@ const (
 )
 
 func main() {
-	fmt.Println("start!")
+	fmt.Println("start nsd!")
 	cobra.EnableCommandSorting = false
 
 	cdc := app.MakeCodec()

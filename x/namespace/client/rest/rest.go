@@ -19,6 +19,7 @@ const(
 	restName = "name"
 )
 
+//REST APIをroutingする
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, storeName string ){
 	r.HandleFunc(fmt.Sprintf("/%s/names", storeName), buyNameHandler(cdc, cliCtx)).Methods("POST")
 	r.HandleFunc(fmt.Sprintf("/%s/names", storeName), setNameHandler(cdc, cliCtx)).Methods("PUT")
@@ -37,7 +38,7 @@ func buyNameHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFun
 	return func (w http.ResponseWriter, r *http.Request) {
 		var req buyNameReq
 
-		if !rest.ReadRESTReq(w,r, cdc, &req){
+		if !rest.ReadRESTReq(w, r, cdc, &req){
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
