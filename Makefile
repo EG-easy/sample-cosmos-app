@@ -21,3 +21,10 @@ update_vendor_deps:
 install:
 	go install ./cmd/nsd
 	go install ./cmd/nscli
+
+#dockerのbuild
+build:
+	docker build . -t sample-cosmos-app
+#docker環境でstart
+start:
+	docker run -it sample-cosmos-app
