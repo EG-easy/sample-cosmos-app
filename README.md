@@ -1,5 +1,5 @@
 # sample-cosmos-app
-tendermint上でcosmos-sdkを使って従来のDNSシステムをモデル化したsample applicationを作りました。
+tendermint上でcosmos-sdkを使って従来のDNSシステムをモデル化したsample applicationです。
 ユーザーは未使用の名前を購入したり、自分の名前を売買することができます。
 
 参考:https://cosmos.network/docs/tutorial/
@@ -40,8 +40,10 @@ $ make start
 
 まずは、ユーザーの設定をして、アプリケーションを開始する。
 ```
-$ sh scripts/start.sh #シェルスクリプトを実行すると、2人分のpasswordを設定することが求められるので、適宜設定する。
-$ nsd start #applicationのdeamonが起動する
+#シェルスクリプトを実行すると、2人分のpasswordを設定することが求められるので、適宜設定する。
+$ sh scripts/start.sh
+#applicationのdeamonが起動する
+$ nsd start 
 ```
 
 ここで、別のwindowを開いて、次のコマンドで残高を確認する
@@ -59,14 +61,14 @@ $ nscli tx nameservice buy-name jack.id 5mycoin --from jack
 $ nscli tx nameservice set-name jack.id 8.8.8.8 --from jack 
 ```
 
-ドメインの所有権を確認する
-```
-$nscli query nameservice whois jack.id
-```
-
 ドメインの名前解決をする
 ```
 $ nscli query nameservice resolve jack.id
+```
+
+ドメインの所有権を確認する
+```
+$nscli query nameservice whois jack.id
 ```
 
 別のユーザーであるaliceがそのドメインをjackより高値で購入する
