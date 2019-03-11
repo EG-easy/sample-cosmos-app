@@ -1,20 +1,21 @@
 package app
 
 import (
+	"encoding/json"
+
+	nameservice "github.com/EG-easy/sample-cosmos-app/x/namespace"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
-	dbm "github.com/tendermint/tendermint/libs/db"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/tendermint/tendermint/libs/log"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/EG-easy/sample-cosmos-app/x/namespace"
+	"github.com/cosmos/cosmos-sdk/x/staking"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
+	dbm "github.com/tendermint/tendermint/libs/db"
+	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"github.com/cosmos/cosmos-sdk/codec"
-	"encoding/json"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 )
 
 const (
@@ -26,22 +27,23 @@ type nameServiceApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
 
-	keyMain *sdk.KVStoreKey
-	keyAccount *sdk.KVStoreKey
-	keyNSnames *sdk.KVStoreKey
-	keyNSowners *sdk.KVStoreKey
-	keyNSprices *sdk.KVStoreKey
+	keyMain          *sdk.KVStoreKey
+	keyAccount       *sdk.KVStoreKey
+	keyNSnames       *sdk.KVStoreKey
+	keyNSowners      *sdk.KVStoreKey
+	keyNSprices      *sdk.KVStoreKey
 	keyFeeCollection *sdk.KVStoreKey
-	keyParams *sdk.KVStoreKey
-	tkeyParams *sdk.TransientStoreKey
+	keyParams        *sdk.KVStoreKey
+	tkeyParams       *sdk.TransientStoreKey
 
-	accountKeeper auth.AccountKeeper
-	bankKeeper bank.Keeper
+	accountKeeper       auth.AccountKeeper
+	bankKeeper          bank.Keeper
 	feeCollectionKeeper auth.FeeCollectionKeeper
-	paramsKeeper params.Keeper
-	nsKeeper nameservice.Keeper
+	paramsKeeper        params.Keeper
+	nsKeeper            nameservice.Keeper
 }
 
+//NewNameServiceApp 新しいNameServiceAppの生成
 func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 
 	cdc := MakeCodec()
@@ -51,16 +53,16 @@ func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 
 	var app = &nameServiceApp{
 		BaseApp: bApp,
-		cdc: cdc,
+		cdc:     cdc,
 
-		keyMain: sdk.NewKVStoreKey("main"),
-		keyAccount: sdk.NewKVStoreKey("acc"),
-		keyNSnames: sdk.NewKVStoreKey("ns_names"),
-		keyNSowners: sdk.NewKVStoreKey("ns_owners"),
-		keyNSprices: sdk.NewKVStoreKey("ns_prices"),
+		keyMain:          sdk.NewKVStoreKey("main"),
+		keyAccount:       sdk.NewKVStoreKey("acc"),
+		keyNSnames:       sdk.NewKVStoreKey("ns_names"),
+		keyNSowners:      sdk.NewKVStoreKey("ns_owners"),
+		keyNSprices:      sdk.NewKVStoreKey("ns_prices"),
 		keyFeeCollection: sdk.NewKVStoreKey("fee_collection"),
-		keyParams: sdk.NewKVStoreKey("params"),
-		tkeyParams: sdk.NewTransientStoreKey("transient_params"),
+		keyParams:        sdk.NewKVStoreKey("params"),
+		tkeyParams:       sdk.NewTransientStoreKey("transient_params"),
 	}
 
 	app.paramsKeeper = params.NewKeeper(app.cdc, app.keyParams, app.tkeyParams)
@@ -117,10 +119,9 @@ func NewNameServiceApp(logger log.Logger, db dbm.DB) *nameServiceApp {
 	return app
 }
 
-
 type GenesisState struct {
-	AuthData auth.GenesisState `json:"auth"`
-	BankData bank.GenesisState `json:"bank"`
+	AuthData auth.GenesisState   `json:"auth"`
+	BankData bank.GenesisState   `json:"bank"`
 	Accounts []*auth.BaseAccount `json:"accounts"`
 }
 
@@ -144,14 +145,14 @@ func (app *nameServiceApp) initChainer(ctx sdk.Context, req abci.RequestInitChai
 	return abci.ResponseInitChain{}
 }
 
-func (app *nameServiceApp) ExportAppStateAndValidators() (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error){
+func (app *nameServiceApp) ExportAppStateAndValidators() (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 	ctx := app.NewContext(true, abci.Header{})
 	accounts := []*auth.BaseAccount{}
 
 	appendAccountsFn := func(acc auth.Account) bool {
 		account := &auth.BaseAccount{
-			Address:acc.GetAddress(),
-			Coins: acc.GetCoins(),
+			Address: acc.GetAddress(),
+			Coins:   acc.GetCoins(),
 		}
 
 		accounts = append(accounts, account)
@@ -161,7 +162,7 @@ func (app *nameServiceApp) ExportAppStateAndValidators() (appState json.RawMessa
 	app.accountKeeper.IterateAccounts(ctx, appendAccountsFn)
 
 	genState := GenesisState{
-		Accounts:accounts,
+		Accounts: accounts,
 		AuthData: auth.DefaultGenesisState(),
 		BankData: bank.DefaultGenesisState(),
 	}

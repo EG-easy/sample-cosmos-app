@@ -12,7 +12,7 @@ MsgsのメソッドであるValidateBasicでは、Msgsのimput時点でのチェ
 ブロックチェーンを参照してチェックを行わないので、その確認作業はhandler側でやる必要がある
 */
 
-//NewHandlerはMsgのroutingを行う
+//NewHandler はMsgのroutingを行う
 func NewHandler(keeper Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
@@ -28,19 +28,19 @@ func NewHandler(keeper Keeper) sdk.Handler {
 }
 
 //SetNameのMsgを扱うためのHandler
-func handleMsgSetName (ctx sdk.Context, keeper Keeper, msg MsgSetName) sdk.Result {
+func handleMsgSetName(ctx sdk.Context, keeper Keeper, msg MsgSetName) sdk.Result {
 	//msg senderと現在のownerが一致するかチェックする
-	if !msg.Owner.Equals(keeper.GetOwner(ctx, msg.Name)){
+	if !msg.Owner.Equals(keeper.GetOwner(ctx, msg.Name)) {
 		return sdk.ErrUnauthorized("Incorrect Owner").Result()
 	}
 	keeper.SetName(ctx, msg.Name, msg.Value)
-		return sdk.Result{}
+	return sdk.Result{}
 }
 
 //buyNameのMsgを扱うためのHandler
-func handleMsgBuyName (ctx sdk.Context, keeper Keeper, msg MsgBuyName) sdk.Result {
+func handleMsgBuyName(ctx sdk.Context, keeper Keeper, msg MsgBuyName) sdk.Result {
 	//msg.Bidの値が、現在価格より高くないといけない
-	if keeper.GetPrice(ctx, msg.Name).IsAllGT(msg.Bid){
+	if keeper.GetPrice(ctx, msg.Name).IsAllGT(msg.Bid) {
 		return sdk.ErrInsufficientCoins("Bid not high enough").Result()
 	}
 	if keeper.HasOwner(ctx, msg.Name) {
@@ -50,7 +50,7 @@ func handleMsgBuyName (ctx sdk.Context, keeper Keeper, msg MsgBuyName) sdk.Resul
 		if err != nil {
 			return sdk.ErrInsufficientCoins("Buyer does not have enough coins").Result()
 		}
-	}else {
+	} else {
 		//新規でNameを購入する場合
 		//coinはburnされてユーザーは所有権を得る
 		_, _, err := keeper.coinKeeper.SubtractCoins(ctx, msg.Buyer, msg.Bid)
@@ -58,8 +58,8 @@ func handleMsgBuyName (ctx sdk.Context, keeper Keeper, msg MsgBuyName) sdk.Resul
 			return sdk.ErrInsufficientCoins("Buyer does not have enough coins").Result()
 		}
 	}
-		keeper.SetOwner(ctx, msg.Name, msg.Buyer)
-		keeper.SetPrice(ctx, msg.Name, msg.Bid)
+	keeper.SetOwner(ctx, msg.Name, msg.Buyer)
+	keeper.SetPrice(ctx, msg.Name, msg.Bid)
 
-		return sdk.Result{}
+	return sdk.Result{}
 }

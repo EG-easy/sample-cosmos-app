@@ -1,26 +1,24 @@
 package rest
 
-
-
 import (
 	"fmt"
 	"net/http"
 
+	nameservice "github.com/EG-easy/sample-cosmos-app/x/namespace"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/types/rest"
 	clientrest "github.com/cosmos/cosmos-sdk/client/rest"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/EG-easy/sample-cosmos-app/x/namespace"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 )
 
-const(
+const (
 	restName = "name"
 )
 
 //REST APIをroutingする
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, storeName string ){
+func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, storeName string) {
 	r.HandleFunc(fmt.Sprintf("/%s/names", storeName), buyNameHandler(cdc, cliCtx)).Methods("POST")
 	r.HandleFunc(fmt.Sprintf("/%s/names", storeName), setNameHandler(cdc, cliCtx)).Methods("PUT")
 	r.HandleFunc(fmt.Sprintf("/%s/names/{%s}", storeName, restName), resolveNameHandler(cdc, cliCtx, storeName)).Methods("GET")
@@ -29,16 +27,16 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 
 type buyNameReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Name string `json:"name"`
-	Amount string `json:"amount"`
-	Buyer string `json:"buyer"`
+	Name    string       `json:"name"`
+	Amount  string       `json:"amount"`
+	Buyer   string       `json:"buyer"`
 }
 
-func buyNameHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc{
-	return func (w http.ResponseWriter, r *http.Request) {
+func buyNameHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		var req buyNameReq
 
-		if !rest.ReadRESTReq(w, r, cdc, &req){
+		if !rest.ReadRESTReq(w, r, cdc, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
@@ -73,9 +71,9 @@ func buyNameHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFun
 
 type setNameReq struct {
 	BaseReq rest.BaseReq `json:"base_req"`
-	Name string `json:"name"`
-	Value string `json:"value"`
-	Owner string `json:"owner"`
+	Name    string       `json:"name"`
+	Value   string       `json:"value"`
+	Owner   string       `json:"owner"`
 }
 
 func setNameHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
@@ -109,7 +107,7 @@ func setNameHandler(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFun
 }
 
 func resolveNameHandler(cdc *codec.Codec, cliCtx context.CLIContext, storeName string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request){
+	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		paramType := vars[restName]
 
@@ -123,7 +121,7 @@ func resolveNameHandler(cdc *codec.Codec, cliCtx context.CLIContext, storeName s
 	}
 }
 
-func whoIsHandler (cdc *codec.Codec, cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func whoIsHandler(cdc *codec.Codec, cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		paramType := vars[restName]

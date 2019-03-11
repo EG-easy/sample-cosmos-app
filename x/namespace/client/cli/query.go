@@ -1,10 +1,10 @@
 package cli
 
 import (
-	"github.com/spf13/cobra"
-	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
 
 	"fmt"
 	"strings"
@@ -12,9 +12,9 @@ import (
 
 func GetCmdResolveName(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "resolve [name]",
+		Use:   "resolve [name]",
 		Short: "resolve name",
-		Args: cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			name := args[0]
@@ -40,9 +40,9 @@ func (r resolveRes) String() string {
 
 func GetCmdWhois(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "whois [name]",
+		Use:   "whois [name]",
 		Short: "Query whois info of name",
-		Args: cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			name := args[0]
@@ -59,10 +59,11 @@ func GetCmdWhois(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 }
+
 type whoIsRes struct {
-	Value string `json:"value"`
+	Value string         `json:"value"`
 	Owner sdk.AccAddress `json:"owner"`
-	Price sdk.Coins `json:"price"`
+	Price sdk.Coins      `json:"price"`
 }
 
 func (w whoIsRes) String() string {

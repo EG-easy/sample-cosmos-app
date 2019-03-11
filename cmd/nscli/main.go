@@ -17,20 +17,20 @@ import (
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	bank "github.com/cosmos/cosmos-sdk/x/bank/client/rest"
 
-	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/cosmos/cosmos-sdk/client/lcd"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	"github.com/cosmos/cosmos-sdk/client/lcd"
+	"github.com/cosmos/cosmos-sdk/client/rpc"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/go-amino"
+	"github.com/tendermint/tendermint/libs/cli"
 )
 
 const (
 	storeAcc = "acc"
-	storeNS = "nameservice"
+	storeNS  = "nameservice"
 )
 
 var defaultCLIHome = os.ExpandEnv("$HOME/.nscli")
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	rootCmd := &cobra.Command{
-		Use: "nscli",
+		Use:   "nscli",
 		Short: "nameservice Client",
 	}
 
@@ -92,9 +92,9 @@ func registerRoutes(rs *lcd.RestServer) {
 
 func queryCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
 	queryCmd := &cobra.Command{
-		Use: "query",
+		Use:     "query",
 		Aliases: []string{"q"},
-		Short: "Querying subcommands",
+		Short:   "Querying subcommands",
 	}
 
 	queryCmd.AddCommand(
@@ -115,7 +115,7 @@ func queryCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
 
 func txCmd(cdc *amino.Codec, mc []sdk.ModuleClients) *cobra.Command {
 	txCmd := &cobra.Command{
-		Use: "tx",
+		Use:   "tx",
 		Short: "Transactions subcommands",
 	}
 

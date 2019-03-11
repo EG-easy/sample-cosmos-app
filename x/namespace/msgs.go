@@ -1,8 +1,9 @@
 package nameservice
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"encoding/json"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 /*
@@ -19,34 +20,35 @@ type Msg interface {
 }
 */
 
-//SetNameに関するMsg interfaceの実装
+//MsgSetName SetNameに関するMsg interfaceの実装
 type MsgSetName struct {
-	Name string
+	Name  string
 	Value string
 	Owner sdk.AccAddress
 }
 
+//NewMsgSetName 新しいMsgSetNameを生成
 func NewMsgSetName(name string, value string, owner sdk.AccAddress) MsgSetName {
 	return MsgSetName{
-		Name: name,
+		Name:  name,
 		Value: value,
 		Owner: owner,
 	}
 }
 
-//module名を定義する
+//Route module名を定義する
 func (msg MsgSetName) Route() string {
 	return "nameservice"
 }
 
-//action名を決める
+//Type action名を決める
 func (msg MsgSetName) Type() string {
 	return "set_name"
 }
 
-//Msgsの中身のチェックをする
+//ValidateBasic Msgsの中身のチェックをする
 func (msg MsgSetName) ValidateBasic() sdk.Error {
-	if msg.Owner.Empty(){
+	if msg.Owner.Empty() {
 		return sdk.ErrInvalidAddress(msg.Owner.String())
 	}
 	if len(msg.Name) == 0 || len(msg.Value) == 0 {
@@ -55,36 +57,37 @@ func (msg MsgSetName) ValidateBasic() sdk.Error {
 	return nil
 }
 
-//署名するためのMsgデータを取得する
-func (msg MsgSetName) GetSignBytes()[]byte{
+//GetSignBytes 署名するためのMsgデータを取得する
+func (msg MsgSetName) GetSignBytes() []byte {
 	b, err := json.Marshal(msg)
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 	return sdk.MustSortJSON(b)
 }
 
-//誰の署名が必要か定義する
+//GetSigners 誰の署名が必要か定義する
 func (msg MsgSetName) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Owner}
 }
 
-//BuyNameに関するMsg interfaceの実装
+//MsgBuyName BuyNameに関するMsg interfaceの実装
 type MsgBuyName struct {
-	Name string
-	Bid sdk.Coins
+	Name  string
+	Bid   sdk.Coins
 	Buyer sdk.AccAddress
 }
 
+//NewMsgBuyName 新しいMsgBuyNameの生成
 func NewMsgBuyName(name string, bid sdk.Coins, buyer sdk.AccAddress) MsgBuyName {
 	return MsgBuyName{
-		Name:name,
-		Bid:bid,
-		Buyer:buyer,
+		Name:  name,
+		Bid:   bid,
+		Buyer: buyer,
 	}
 }
 
-func (msg MsgBuyName) Route() string{
+func (msg MsgBuyName) Route() string {
 	return "nameservice"
 }
 
@@ -93,7 +96,7 @@ func (msg MsgBuyName) Type() string {
 }
 
 func (msg MsgBuyName) ValidateBasic() sdk.Error {
-	if msg.Buyer.Empty(){
+	if msg.Buyer.Empty() {
 		return sdk.ErrInvalidAddress(msg.Buyer.String())
 	}
 	if len(msg.Name) == 0 {
@@ -105,7 +108,7 @@ func (msg MsgBuyName) ValidateBasic() sdk.Error {
 	return nil
 }
 
-func (msg MsgBuyName) GetSignBytes() []byte{
+func (msg MsgBuyName) GetSignBytes() []byte {
 	b, err := json.Marshal(msg)
 	if err != nil {
 		panic(err)
