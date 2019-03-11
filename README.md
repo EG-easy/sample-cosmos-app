@@ -14,27 +14,30 @@ Tendermintの概要は、[こちら](./docs/tendermint-overview.md)を参照し�
 - ドメインの所有権の確認(whois)
 
 ## Getting started
-```
-$ git clone https://github.com/EG-easy/sample-cosmos-app.git
-$ cd sample-cosmos-app
-```
 
 ### Local Environment on Mac OS
 **requirement**
 Golang 
 
 ```
+$ mkdir -p $GOPATH/src/github.com/EG-easy
+$ cd $GOPATH/src/github.com/EG-easy
+$ git clone https://github.com/EG-easy/sample-cosmos-app.git
+$ cd sample-cosmos-app
 $ make get_tools && make get_vendor_deps
 $ make install
 ```
 
 ### Using Docker
 ```
+$ git clone https://github.com/EG-easy/sample-cosmos-app.git
+$ cd sample-cosmos-app
 $ make build
 $ make start
 # コンテナのなかで
 $ make install 
 ```
+
 ちなみに起動しているコンテナの中には、`docker exec -it sample-cosmos-app /bin/sh`で入れる。
 
 ## Demo
